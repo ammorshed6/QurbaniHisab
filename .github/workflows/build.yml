@@ -1,0 +1,32 @@
+name: Build APK
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install Cordova
+        run: npm install -g cordova
+      - name: Build
+        run: |
+          cordova create app com.ammorshed6.qurbanihisab QurbaniHisab
+          cp index.html app/www/index.html
+          cd app
+          cordova platform add android
+          cordova build android
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: QurbaniHisab
+          path: app/platforms/android/app/build/outputs/apk/**/*.apk
