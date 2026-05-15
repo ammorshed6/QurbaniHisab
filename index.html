@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>কোরবানি হিসাব</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow-x:hidden;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0a0a0a;color:#e8e0d0;font-size:14px;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a0f00,#0f0800);padding:14px 12px 0;border-bottom:2px solid #8B4513;position:sticky;top:0;z-index:100;}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
+.logo-icon{font-size:32px;line-height:1;}
+.htitle{font-size:19px;font-weight:bold;color:#D4A017;letter-spacing:1px;}
+.hsub{text-align:center;color:#6b5a3a;font-size:10px;margin-bottom:10px;}
+
+/* TABS */
+.tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;padding:7px 13px;border:1px solid #3d2b0a;border-radius:20px;background:#1a1000;color:#6b5a3a;font-size:11px;font-weight:bold;cursor:pointer;white-space:nowrap;-webkit-user-select:none;}
+.tab.on{background:#D4A017;color:#0a0800;border-color:#D4A017;}
+
+/* CONTENT */
+.content{padding:12px 10px 90px;}
+.page{display:none;}.page.on{display:block;}
+
+/* CARDS */
+.card{background:#110d00;border:1px solid #2d1f00;border-radius:14px;padding:14px;margin-bottom:12px;}
+.ct{color:#D4A017;font-size:13px;font-weight:bold;margin-bottom:12px;}
+
+/* FORM */
+.lb{font-size:10px;color:#6b5a3a;font-weight:bold;text-transform:uppercase;margin-bottom:3px;display:block;letter-spacing:.5px;}
+input,select,textarea{width:100%;padding:10px 12px;margin-bottom:10px;border-radius:9px;border:1px solid #3d2b0a;background:#1a1200;color:#e8e0d0;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:#D4A017;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* BUTTONS */
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:8px;font-family:inherit;}
+.btn:active{opacity:.75;}
+.g{background:#D4A017;color:#0a0800;}
+.r{background:#8B1A1A;color:#fff;}
+.gy{background:#1e1800;color:#6b5a3a;border:1px solid #3d2b0a;}
+
+/* SHARE CARDS — Each person */
+.share-card{border-radius:14px;padding:14px;margin-bottom:10px;border:2px solid #3d2b0a;}
+.sc-name{font-size:16px;font-weight:bold;color:#D4A017;margin-bottom:4px;}
+.sc-share{font-size:11px;color:#6b5a3a;margin-bottom:10px;}
+.sc-amount{font-size:26px;font-weight:bold;color:#D4A017;text-align:center;padding:10px;background:#0a0800;border-radius:10px;margin:4px 0;}
+.sc-per{font-size:10px;color:#6b5a3a;text-align:center;margin-top:3px;}
+
+/* STAT GRID */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.sc2{background:#0a0800;border:1px solid #2d1f00;border-radius:10px;padding:11px;text-align:center;}
+.sv{font-size:18px;font-weight:bold;color:#D4A017;}
+.sl{font-size:10px;color:#4a3a1a;margin-top:3px;}
+
+/* ITEMS LIST */
+.item{background:#0d0900;border:1px solid #2d1f00;border-radius:10px;padding:12px;margin-bottom:8px;}
+.item-h{display:flex;justify-content:space-between;align-items:flex-start;}
+.item-t{font-weight:bold;font-size:13px;color:#e8e0d0;}
+.item-s{font-size:11px;color:#4a3a1a;margin-top:3px;line-height:1.5;}
+.item-amt{font-size:15px;font-weight:bold;color:#D4A017;white-space:nowrap;margin-left:8px;}
+.btns{display:flex;gap:4px;}
+.del-btn{background:none;border:none;font-size:17px;cursor:pointer;padding:2px 4px;line-height:1;}
+.edit-btn{color:#D4A017;}
+.dlt-btn{color:#8B1A1A;}
+
+/* CATEGORY BADGES */
+.cat{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:bold;margin-bottom:4px;}
+.cat-0{background:#1a1000;color:#D4A017;border:1px solid #D4A017;}
+.cat-1{background:#001a0a;color:#2d8a4e;border:1px solid #2d8a4e;}
+.cat-2{background:#001015;color:#2d6a8a;border:1px solid #2d6a8a;}
+.cat-3{background:#150010;color:#8a2d7a;border:1px solid #8a2d7a;}
+.cat-4{background:#150a00;color:#8a5a2d;border:1px solid #8a5a2d;}
+.cat-5{background:#0a1500;color:#5a8a2d;border:1px solid #5a8a2d;}
+.cat-6{background:#15000a;color:#8a2d4a;border:1px solid #8a2d4a;}
+
+/* EDIT BAR */
+.edit-bar{display:none;background:#1a1200;border:1px solid #D4A017;border-radius:9px;padding:8px 12px;margin-bottom:8px;justify-content:space-between;align-items:center;}
+.edit-bar.on{display:flex;}
+
+/* PROGRESS */
+.pbar{height:6px;background:#1e1800;border-radius:10px;overflow:hidden;margin-top:6px;}
+.pfill{height:100%;background:#D4A017;border-radius:10px;}
+
+/* DIVIDER */
+.div{border:none;border-top:1px solid #2d1f00;margin:12px 0;}
+
+/* EMPTY */
+.empty{text-align:center;color:#2d1f00;padding:24px 0;font-size:13px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#D4A017;color:#0a0800;padding:9px 22px;border-radius:25px;font-weight:bold;font-size:13px;opacity:0;transition:opacity .3s;z-index:9999;pointer-events:none;white-space:nowrap;max-width:92%;}
+.toast.on{opacity:1;}
+
+/* LOADING */
+#loading{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;z-index:99999;flex-direction:column;gap:14px;}
+#loading p{color:#D4A017;font-size:15px;font-weight:bold;}
+.spin{width:36px;height:36px;border:3px solid #2d1f00;border-top-color:#D4A017;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* SUMMARY HEADER */
+.sum-hdr{text-align:center;padding:16px;background:linear-gradient(135deg,#1a1000,#0f0800);border-radius:14px;margin-bottom:12px;border:2px solid #D4A017;}
+.sum-total{font-size:28px;font-weight:bold;color:#D4A017;}
+.sum-label{font-size:11px;color:#6b5a3a;margin-top:3px;}
+
+/* COPYRIGHT */
+.copy{text-align:center;padding:16px 10px 8px;border-top:1px solid #2d1f00;font-size:10px;color:#3d2b0a;}
+.copy span{color:#D4A017;}
+
+/* COLORS */
+.gold{color:#D4A017;}.red{color:#8B1A1A;}.green{color:#2d8a4e;}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spin"></div><p>লোড হচ্ছে...</p></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo-row">
+    <div class="logo-icon">🐄</div>
+    <div>
+      <div class="htitle">কোরবানি হিসাব</div>
+    </div>
+  </div>
+  <div class="hsub">এ.এম. মোরশেদ · সাজ্জাদ রহিম · সাহেদ ভাই — ৭ ভাগ কোরবানি</div>
+  <div class="tabs">
+    <div class="tab on"  onclick="goTab('home',this)">📊 সারসংক্ষেপ</div>
+    <div class="tab"     onclick="goTab('entry',this)">➕ খরচ এন্ট্রি</div>
+    <div class="tab"     onclick="goTab('list',this)">📋 তালিকা</div>
+    <div class="tab"     onclick="goTab('share',this)">👥 ভাগ হিসাব</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ সারসংক্ষেপ ══ -->
+<div id="pg-home" class="page on">
+  <div class="sum-hdr">
+    <div style="font-size:11px;color:#6b5a3a;margin-bottom:6px;">মোট খরচ</div>
+    <div class="sum-total" id="h-total">০ ৳</div>
+    <div class="sum-label">৭ ভাগে বিভক্ত</div>
+    <div style="font-size:13px;color:#D4A017;margin-top:8px;font-weight:bold;">প্রতি ভাগ: <span id="h-per">০ ৳</span></div>
+  </div>
+
+  <div class="sg">
+    <div class="sc2"><div class="sv" id="h-items">০</div><div class="sl">মোট এন্ট্রি</div></div>
+    <div class="sc2"><div class="sv" id="h-cats">০</div><div class="sl">ক্যাটাগরি</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">🐄 ক্যাটাগরিভিত্তিক খরচ</div>
+    <div id="h-cats-list"><div class="empty">কোনো এন্ট্রি নেই</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">👥 অংশীদারের সংক্ষিপ্ত হিসাব</div>
+    <div id="h-partners"></div>
+  </div>
+</div>
+
+<!-- ══ খরচ এন্ট্রি ══ -->
+<div id="pg-entry" class="page">
+  <div class="card">
+    <div class="ct">➕ নতুন খরচ যোগ করুন</div>
+
+    <span class="lb">ক্যাটাগরি</span>
+    <select id="e-cat">
+      <option value="0">🐄 গরু ক্রয়</option>
+      <option value="1">🚛 পরিবহন</option>
+      <option value="2">👷 লেবার / কাটিং</option>
+      <option value="3">🧑‍🌾 রাখাল</option>
+      <option value="4">🌾 গরুর খাবার (ভূশি/চাল/খড়)</option>
+      <option value="5">🧹 অন্যান্য আনুষঙ্গিক</option>
+      <option value="6">📦 অন্যান্য</option>
+    </select>
+
+    <span class="lb">বিবরণ</span>
+    <input type="text" id="e-desc" placeholder="যেমন: গরু ক্রয় — হাট থেকে">
+
+    <div class="row2">
+      <div><span class="lb">তারিখ</span><input type="date" id="e-date"></div>
+      <div><span class="lb">পরিমাণ (৳)</span><input type="number" id="e-amt" placeholder="০"></div>
+    </div>
+
+    <span class="lb">নোট (ঐচ্ছিক)</span>
+    <input type="text" id="e-note" placeholder="অতিরিক্ত তথ্য">
+
+    <div class="edit-bar" id="e-bar">
+      <span style="font-size:12px;color:#D4A017;">✏️ সম্পাদনা মোড চলছে</span>
+      <button class="btn gy" style="margin:0;width:auto;padding:5px 10px;font-size:11px;" onclick="cancelEdit()">✖ বাতিল</button>
+    </div>
+    <button class="btn g" id="e-save" onclick="saveEntry()">💾 সেভ করুন</button>
+  </div>
+</div>
+
+<!-- ══ তালিকা ══ -->
+<div id="pg-list" class="page">
+  <div class="card">
+    <div class="ct">📋 সকল খরচের তালিকা</div>
+    <select id="f-cat" onchange="rList()" style="margin-bottom:10px;">
+      <option value="-1">🔍 সব ক্যাটাগরি</option>
+      <option value="0">🐄 গরু ক্রয়</option>
+      <option value="1">🚛 পরিবহন</option>
+      <option value="2">👷 লেবার / কাটিং</option>
+      <option value="3">🧑‍🌾 রাখাল</option>
+      <option value="4">🌾 গরুর খাবার</option>
+      <option value="5">🧹 আনুষঙ্গিক</option>
+      <option value="6">📦 অন্যান্য</option>
+    </select>
+    <div id="list-h"><div class="empty">কোনো এন্ট্রি নেই</div></div>
+  </div>
+</div>
+
+<!-- ══ ভাগ হিসাব ══ -->
+<div id="pg-share" class="page">
+  <div class="sum-hdr">
+    <div style="font-size:11px;color:#6b5a3a;margin-bottom:4px;">মোট খরচ ÷ ৭ ভাগ</div>
+    <div class="sum-total" id="s-total">০ ৳</div>
+    <div class="sum-label">প্রতি ভাগ: <span id="s-per" class="gold">০ ৳</span></div>
+  </div>
+
+  <!-- মোরশেদ -->
+  <div class="share-card" style="border-color:#D4A017;background:#110d00;">
+    <div class="sc-name">🙋 এ.এম. মোরশেদ</div>
+    <div class="sc-share">৩ ভাগ (৭ ভাগের মধ্যে)</div>
+    <div class="sc-amount" id="sh-morshed">০ ৳</div>
+    <div class="sc-per" id="sh-morshed-d">৩ × প্রতি ভাগ</div>
+    <div class="pbar"><div class="pfill" style="width:42.8%"></div></div>
+  </div>
+
+  <!-- সাজ্জাদ -->
+  <div class="share-card" style="border-color:#2d8a4e;background:#001a0a;">
+    <div class="sc-name" style="color:#2d8a4e;">🙋 মোঃ সাজ্জাদ রহিম</div>
+    <div class="sc-share">৩ ভাগ (৭ ভাগের মধ্যে)</div>
+    <div class="sc-amount" style="color:#2d8a4e;" id="sh-sajjad">০ ৳</div>
+    <div class="sc-per" id="sh-sajjad-d">৩ × প্রতি ভাগ</div>
+    <div class="pbar"><div class="pfill" style="width:42.8%;background:#2d8a4e;"></div></div>
+  </div>
+
+  <!-- সাহেদ -->
+  <div class="share-card" style="border-color:#2d6a8a;background:#001015;">
+    <div class="sc-name" style="color:#2d6a8a;">🙋 সাহেদ ভাই</div>
+    <div class="sc-share">১ ভাগ (৭ ভাগের মধ্যে)</div>
+    <div class="sc-amount" style="color:#2d6a8a;" id="sh-sahed">০ ৳</div>
+    <div class="sc-per" id="sh-sahed-d">১ × প্রতি ভাগ</div>
+    <div class="pbar"><div class="pfill" style="width:14.3%;background:#2d6a8a;"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📊 ক্যাটাগরিভিত্তিক বিস্তারিত</div>
+    <div id="s-detail"><div class="empty">কোনো ডেটা নেই</div></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- COPYRIGHT -->
+<div class="copy">🐄 কোরবানি হিসাব · <span>© A.M. Morshed</span> · All Rights Reserved</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+var MEM={};
+function sGet(k){try{var v=localStorage.getItem(k);if(v){MEM[k]=JSON.parse(v);return MEM[k];}}catch(e){}try{var v=sessionStorage.getItem(k);if(v){MEM[k]=JSON.parse(v);return MEM[k];}}catch(e){}return MEM[k]!==undefined?MEM[k]:null;}
+function sSet(k,v){MEM[k]=v;var s=JSON.stringify(v);try{localStorage.setItem(k,s);}catch(e){}try{sessionStorage.setItem(k,s);}catch(e){};}
+
+var CATS=['🐄 গরু ক্রয়','🚛 পরিবহন','👷 লেবার/কাটিং','🧑‍🌾 রাখাল','🌾 গরুর খাবার','🧹 আনুষঙ্গিক','📦 অন্যান্য'];
+var PARTNERS=[
+  {n:'এ.এম. মোরশেদ', shares:3, color:'#D4A017'},
+  {n:'মোঃ সাজ্জাদ রহিম', shares:3, color:'#2d8a4e'},
+  {n:'সাহেদ ভাই', shares:1, color:'#2d6a8a'}
+];
+var TOTAL_SHARES=7;
+var editIdx=-1;
+
+function g(id){return document.getElementById(id).value;}
+function s(id,v){var el=document.getElementById(id);if(el)el.value=v;}
+function fmt(n){return Number(n||0).toLocaleString();}
+function tst(msg){var el=document.getElementById('tst');el.textContent=msg;el.classList.add('on');setTimeout(function(){el.classList.remove('on');},2600);}
+
+// ══ ENTRY ═══════════════════════════════════
+function saveEntry(){
+  var cat=parseInt(g('e-cat')),desc=g('e-desc').trim(),dt=g('e-date'),amt=parseFloat(g('e-amt'))||0,note=g('e-note').trim();
+  if(!desc){tst('বিবরণ লিখুন!');return;}
+  if(!amt){tst('পরিমাণ লিখুন!');return;}
+  var list=sGet('qb_data')||[];
+  var entry={cat:cat,desc:desc,dt:dt,amt:amt,note:note};
+  if(editIdx>=0){list[editIdx]=entry;tst('আপডেট হয়েছে ✅');}
+  else{list.push(entry);tst('সেভ হয়েছে ✅');}
+  sSet('qb_data',list);
+  cancelEdit(); rAll();
+}
+function editEntry(i){
+  var list=sGet('qb_data')||[],r=list[i];if(!r)return;
+  editIdx=i;
+  s('e-cat',r.cat);s('e-desc',r.desc);s('e-date',r.dt||'');s('e-amt',r.amt);s('e-note',r.note||'');
+  document.getElementById('e-bar').classList.add('on');
+  document.getElementById('e-save').textContent='✅ আপডেট করুন';
+  goTab('entry',document.querySelector('[onclick="goTab(\'entry\',this)"]'));
+  window.scrollTo(0,0);tst('সম্পাদনা করুন ✏️');
+}
+function delEntry(i){
+  if(!confirm('এই এন্ট্রি মুছে ফেলবেন?')) return;  // some WebViews may not support confirm
+  var list=sGet('qb_data')||[];list.splice(i,1);sSet('qb_data',list);rAll();tst('মুছে ফেলা হয়েছে');
+}
+function cancelEdit(){
+  editIdx=-1;
+  document.getElementById('e-bar').classList.remove('on');
+  document.getElementById('e-save').textContent='💾 সেভ করুন';
+  s('e-desc','');s('e-amt','');s('e-note','');s('e-cat','0');
+}
+
+// ══ RENDER LIST ════════════════════════════
+function rList(){
+  var list=sGet('qb_data')||[];
+  var fc=parseInt(g('f-cat'));
+  var fl=fc===-1?[].concat(list):list.filter(function(x){return x.cat===fc;});
+  var el=document.getElementById('list-h');
+  if(!fl.length){el.innerHTML='<div class="empty">কোনো এন্ট্রি নেই</div>';return;}
+  var h='',total=0;
+  var origIdx=fl.map(function(r){return list.indexOf(r);});
+  for(var i=fl.length-1;i>=0;i--){
+    var r=fl[i];total+=r.amt;
+    h+='<div class="item"><div class="item-h"><div style="flex:1;">';
+    h+='<span class="cat cat-'+r.cat+'">'+CATS[r.cat]+'</span>';
+    h+='<div class="item-t">'+r.desc+'</div>';
+    if(r.dt||r.note) h+='<div class="item-s">'+(r.dt?'📅 '+r.dt:'')+(r.note?' · '+r.note:'')+'</div>';
+    h+='</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">';
+    h+='<div class="item-amt">'+fmt(r.amt)+' ৳</div>';
+    h+='<div class="btns"><button class="del-btn edit-btn" onclick="editEntry('+origIdx[i]+')">✏️</button>';
+    h+='<button class="del-btn dlt-btn" onclick="delEntry('+origIdx[i]+')">🗑</button></div>';
+    h+='</div></div></div>';
+  }
+  h+='<div style="display:flex;justify-content:space-between;padding:10px 4px 2px;border-top:1px solid #2d1f00;font-weight:bold;"><span>ফিল্টার মোট</span><span class="gold">'+fmt(total)+' ৳</span></div>';
+  el.innerHTML=h;
+}
+
+// ══ RENDER HOME ════════════════════════════
+function rHome(){
+  var list=sGet('qb_data')||[];
+  var total=0;list.forEach(function(r){total+=r.amt||0;});
+  var perShare=total/TOTAL_SHARES;
+  document.getElementById('h-total').textContent=fmt(Math.round(total))+' ৳';
+  document.getElementById('h-per').textContent=fmt(Math.round(perShare))+' ৳';
+  document.getElementById('h-items').textContent=list.length;
+
+  // Category breakdown
+  var catTotals=new Array(CATS.length).fill(0);
+  list.forEach(function(r){catTotals[r.cat]+=r.amt||0;});
+  var usedCats=catTotals.filter(function(v){return v>0;}).length;
+  document.getElementById('h-cats').textContent=usedCats;
+
+  var catH='';
+  catTotals.forEach(function(v,i){
+    if(!v)return;
+    var pct=total>0?Math.round(v/total*100):0;
+    catH+='<div style="margin-bottom:10px;">';
+    catH+='<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span class="cat cat-'+i+'">'+CATS[i]+'</span><span class="gold">'+fmt(v)+' ৳ ('+pct+'%)</span></div>';
+    catH+='<div class="pbar"><div class="pfill" style="width:'+pct+'%"></div></div>';
+    catH+='</div>';
+  });
+  document.getElementById('h-cats-list').innerHTML=catH||'<div class="empty">কোনো এন্ট্রি নেই</div>';
+
+  // Partners summary
+  var ph='';
+  PARTNERS.forEach(function(p){
+    var amt=Math.round(perShare*p.shares);
+    ph+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2d1f00;">';
+    ph+='<div><div style="font-weight:bold;color:'+p.color+';">'+p.n+'</div><div style="font-size:10px;color:#4a3a1a;">'+p.shares+' ভাগ</div></div>';
+    ph+='<div style="font-size:16px;font-weight:bold;color:'+p.color+';">'+fmt(amt)+' ৳</div>';
+    ph+='</div>';
+  });
+  document.getElementById('h-partners').innerHTML=ph||'<div class="empty">কোনো ডেটা নেই</div>';
+}
+
+// ══ RENDER SHARE ═══════════════════════════
+function rShare(){
+  var list=sGet('qb_data')||[];
+  var total=0;list.forEach(function(r){total+=r.amt||0;});
+  var perShare=total/TOTAL_SHARES;
+
+  document.getElementById('s-total').textContent=fmt(Math.round(total))+' ৳';
+  document.getElementById('s-per').textContent=fmt(Math.round(perShare))+' ৳';
+
+  var ids=[['sh-morshed','sh-morshed-d',3],['sh-sajjad','sh-sajjad-d',3],['sh-sahed','sh-sahed-d',1]];
+  ids.forEach(function(item){
+    var amt=Math.round(perShare*item[2]);
+    document.getElementById(item[0]).textContent=fmt(amt)+' ৳';
+    document.getElementById(item[1]).textContent=item[2]+' × '+fmt(Math.round(perShare))+' ৳';
+  });
+
+  // Category detail
+  var catTotals=new Array(CATS.length).fill(0);
+  list.forEach(function(r){catTotals[r.cat]+=r.amt||0;});
+  var dh='';
+  catTotals.forEach(function(v,i){
+    if(!v)return;
+    var perShareCat=v/TOTAL_SHARES;
+    dh+='<div style="background:#0a0800;border:1px solid #2d1f00;border-radius:10px;padding:11px;margin-bottom:8px;">';
+    dh+='<div style="display:flex;justify-content:space-between;margin-bottom:8px;">';
+    dh+='<span class="cat cat-'+i+'">'+CATS[i]+'</span>';
+    dh+='<span class="gold">মোট: '+fmt(v)+' ৳</span>';
+    dh+='</div>';
+    PARTNERS.forEach(function(p){
+      var amt=Math.round(perShareCat*p.shares);
+      dh+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;">';
+      dh+='<span style="color:'+p.color+';">'+p.n+'</span>';
+      dh+='<span style="color:'+p.color+';font-weight:bold;">'+fmt(amt)+' ৳</span>';
+      dh+='</div>';
+    });
+    dh+='</div>';
+  });
+  document.getElementById('s-detail').innerHTML=dh||'<div class="empty">কোনো ডেটা নেই</div>';
+}
+
+// ══ TAB ════════════════════════════════════
+function goTab(nm,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('pg-'+nm).classList.add('on');
+  if(el) el.classList.add('on');
+  if(nm==='home') rHome();
+  if(nm==='list') rList();
+  if(nm==='share') rShare();
+}
+
+function rAll(){rHome();rList();rShare();}
+
+// ══ INIT ═══════════════════════════════════
+window.onload=function(){
+  var today=new Date().toISOString().slice(0,10);
+  s('e-date',today);
+  rAll();
+  document.getElementById('loading').style.display='none';
+};
+</script>
+</body>
+</html>
